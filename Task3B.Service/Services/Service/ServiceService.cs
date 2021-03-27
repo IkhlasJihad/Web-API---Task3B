@@ -22,20 +22,27 @@ namespace Task3B.Service.Services.Service
         }
         public async Task Create(CreateServiceDTO dto)
         {
-            var CreatedService = new ServiceDbEntity();
-            CreatedService.Title = dto.Title;
-            CreatedService.Description = dto.Description;
-            CreatedService.SubSectionId = dto.SubSectionId;
-            CreatedService.ServiceProviderId = dto.ServiceProviderId;
-            _DB.Services.Add(CreatedService);
-            _DB.SaveChanges();
-            foreach (var file in dto.Files) {
-                var fileName = await _fileService.SaveFile(file, "Files");
-                var fileEntity = new FileDbEntity();
-                fileEntity.ServiceId = CreatedService.Id;
-                fileEntity.FilePath = fileName;
-                _DB.Files.Add(fileEntity);
+            try {
+                var CreatedService = new ServiceDbEntity();
+                CreatedService.Title = dto.Title;
+                CreatedService.Description = dto.Description;
+                CreatedService.SubSectionId = dto.SubSectionId;
+                CreatedService.ServiceProviderId = dto.ServiceProviderId;
+                _DB.Services.Add(CreatedService);
                 _DB.SaveChanges();
+                foreach (var file in dto.Files)
+                {
+                    var fileName = await _fileService.SaveFile(file, "Files");
+                    var fileEntity = new FileDbEntity();
+                    fileEntity.ServiceId = CreatedService.Id;
+                    fileEntity.FilePath = fileName;
+                    _DB.Files.Add(fileEntity);                    
+                }
+                _DB.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
         public List<ServiceViewModel> GetAll(int pageNum)

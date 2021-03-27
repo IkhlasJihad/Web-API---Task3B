@@ -22,9 +22,9 @@ namespace Task3B.API.Controllers
         }
         
         [HttpPost]
-        public IActionResult Create([FromForm] CreateServiceDTO dto)
+        public async Task<IActionResult> Create([FromForm] CreateServiceDTO dto)
         {
-            _ServiceService.Create(dto);
+            await _ServiceService.Create(dto);
             return Ok(GetResponse("Added"));
         }
         [HttpPut]
